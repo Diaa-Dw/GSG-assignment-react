@@ -1,36 +1,10 @@
-import React, { useEffect, useState } from "react";
+import useFetchCategories from "../hooks/useFetchCategories";
 
-const FilterSection = () => {
-  const [categories, setCategories] = useState([]);
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(
-          `https://fakestoreapi.com/products/categories`,
-          { signal }
-        );
-        if (res.status !== 200) {
-          throw new Error(`Something went wrong while fetching categories`);
-        }
-        const data = await res.json();
-        setCategories(data);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          alert(err);
-        }
-      }
-    };
-    fetchCategories();
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
+const FilterSection = ({ onCategoryChange }) => {
+  const [categories] = useFetchCategories();
   return (
-    <section class='filter-section'>
-      <select class='category-filter'>
+    <section className='filter-section'>
+      <select className='category-filter' onChange={(e) => onCategoryChange(e)}>
         <option value='all'>All</option>
         {categories.map((category) => (
           <option key={category} value={category}>
